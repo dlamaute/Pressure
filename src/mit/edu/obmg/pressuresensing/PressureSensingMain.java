@@ -11,17 +11,17 @@ import android.util.Log;
 import android.widget.ToggleButton;
 
 public class PressureSensingMain extends IOIOActivity {
-	private final String TAG = "Pressure Sensing";
+	private final String TAG = "PressureSensing";
 	private ToggleButton button_;
 	private DigitalOutput led_;
 	
 	//Pressure Sensing
-	int _pressurePin = 40;
+	int _pressurePin = 41;
 	private AnalogInput _pressureRead;
-	float _volts = 0;
+	float _volts = 1;
 	
 	//Vibration
-	float rate = 500;
+	float rate = 1000;
 	DigitalOutput out;
 	
 	@Override
@@ -33,14 +33,14 @@ public class PressureSensingMain extends IOIOActivity {
 		
 	}
 	
-	/*protected void onStart(){
+	protected void onStart(){
 		super.onStart();
 	}
 
 	protected void onStop(){
 		super.onStop();
-		_pressureRead.close();
-	}*/
+		//_pressureRead.close();
+	}
 
 	class Looper extends BaseIOIOLooper {
 			
@@ -50,19 +50,18 @@ public class PressureSensingMain extends IOIOActivity {
 			
 			_pressureRead = ioio_.openAnalogInput(_pressurePin);
 			//_pressureRead.setBuffer(200);
-			
 			out = ioio_.openDigitalOutput(23, true);
-			Log.d(TAG, "debug");
+			Vibration();
 		}
 
 		@Override
 		public void loop() throws ConnectionLostException {
 			//led_.write(!button_.isChecked());
 			try {
+				_volts = _pressureRead.getVoltage();
+				Log.i(TAG, "Volts= "+_volts);
 				Thread.sleep(100);
-				
 				//_volts = _pressureRead.getVoltageBuffered();
-				Vibration();
 			} catch (InterruptedException e) {
 			}
 		}
@@ -76,16 +75,17 @@ public class PressureSensingMain extends IOIOActivity {
 	public void Vibration(){
 		new Thread(new Runnable(){
 			public void run(){
-				Log.i (TAG, ":| trying thread");
+				Log.d (TAG, ":) Inside the thread");
 				try {
-					_volts = _pressureRead.getVoltage();
-					rate = rate/_volts;
-					Log.i(TAG, "Volts= "+_volts);
+					while(true){
+						rate = rate/_volts*10;
+						Log.i (TAG, "Rate= "+rate);
+						led_.write(false);
+						Thread.sleep((long) (rate/2));
+						led_.write(true);
+						Thread.sleep((long) (rate/2));
+					}
 					
-					led_.write(false);
-					Thread.sleep((long) (rate/2));
-					led_.write(true);
-					Thread.sleep((long) (rate/2));
 				} catch (ConnectionLostException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
