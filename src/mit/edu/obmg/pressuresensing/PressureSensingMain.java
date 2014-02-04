@@ -2,7 +2,9 @@ package mit.edu.obmg.pressuresensing;
 
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.DigitalOutput;
+import ioio.lib.api.IOIO;
 import ioio.lib.api.exception.ConnectionLostException;
+import ioio.lib.util.AbstractIOIOActivity;
 import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOActivity;
@@ -13,7 +15,7 @@ import android.widget.ToggleButton;
 public class PressureSensingMain extends IOIOActivity {
 	private final String TAG = "PressureSensing";
 	private ToggleButton button_;
-	private DigitalOutput led_;
+	private IOIO ioio_;
 	
 	//Pressure Sensing
 	int _pressurePin = 41;
@@ -41,17 +43,49 @@ public class PressureSensingMain extends IOIOActivity {
 		super.onStop();
 		//_pressureRead.close();
 	}
+	class Vibration extends Thread{
 
-	class Looper extends BaseIOIOLooper {
+		
+		private final IOIO ioio_;
+		
+		public Vibration(IOIO ioio){
+			Log.i (TAG, ":) Inside Thread");
+			ioio_=ioio;
+		}
+		
+		private DigitalOutput led_;
+		
+		public void run(){
 			
+			while(true){
+				rate = rate/_volts*10;
+				try{
+					led_ = ioio_.openDigitalOutput(0, true);
+					Log.i (TAG, "Rate= "+rate);
+					led_.write(false);
+					sleep((long) (1000));
+					led_.write(true);
+					sleep((long) (1000));
+				}catch (ConnectionLostException e){
+				}catch (Exception e){
+					Log.e(TAG, ":( Unexpected exception caught", e);
+					ioio_.disconnect();
+					break;
+				}
+			}
+		}
+	}
+	
+	class Looper extends BaseIOIOLooper {
+		Vibration thread_ = new Vibration(ioio_);
+		
 		@Override
 		protected void setup() throws ConnectionLostException {
-			led_ = ioio_.openDigitalOutput(0, true);
 			
 			_pressureRead = ioio_.openAnalogInput(_pressurePin);
 			//_pressureRead.setBuffer(200);
 			out = ioio_.openDigitalOutput(23, true);
-			Vibration();
+			thread_.start();
 		}
 
 		@Override
@@ -65,36 +99,22 @@ public class PressureSensingMain extends IOIOActivity {
 			} catch (InterruptedException e) {
 			}
 		}
+		
+		@Override
+		public void disconnected() {
+			Log.i(TAG, "IOIO disconnected");
+			try {
+				thread_.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
-	
+		
 	@Override
 	protected IOIOLooper createIOIOLooper() {
 		return new Looper();
 	}
 	
-	public void Vibration(){
-		new Thread(new Runnable(){
-			public void run(){
-				Log.d (TAG, ":) Inside the thread");
-				try {
-					while(true){
-						rate = rate/_volts*10;
-						Log.i (TAG, "Rate= "+rate);
-						led_.write(false);
-						Thread.sleep((long) (rate/2));
-						led_.write(true);
-						Thread.sleep((long) (rate/2));
-					}
-					
-				} catch (ConnectionLostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-			}
-		}).start();
-	}
 }
