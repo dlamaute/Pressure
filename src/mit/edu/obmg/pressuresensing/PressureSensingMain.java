@@ -15,7 +15,9 @@ import android.widget.ToggleButton;
 public class PressureSensingMain extends IOIOActivity {
 	private final String TAG = "PressureSensing";
 	private ToggleButton button_;
-	private IOIO ioio_;
+	
+	private Thread Vibration;
+	Thread thread = new Thread(Vibration);
 	
 	//Pressure Sensing
 	int _pressurePin = 41;
@@ -32,6 +34,7 @@ public class PressureSensingMain extends IOIOActivity {
 		setContentView(R.layout.activity_pressure_sensing_main);
 		
 		button_ = (ToggleButton) findViewById(R.id.button);
+
 		
 	}
 	
@@ -43,54 +46,30 @@ public class PressureSensingMain extends IOIOActivity {
 		super.onStop();
 		//_pressureRead.close();
 	}
-	class Vibration extends Thread{
-
-		
-		private final IOIO ioio_;
-		
-		public Vibration(IOIO ioio){
-			Log.i (TAG, ":) Inside Thread");
-			ioio_=ioio;
-		}
-		
-		private DigitalOutput led_;
-		
-		public void run(){
-			
-			while(true){
-				rate = rate/_volts*10;
-				try{
-					led_ = ioio_.openDigitalOutput(0, true);
-					Log.i (TAG, "Rate= "+rate);
-					led_.write(false);
-					sleep((long) (1000));
-					led_.write(true);
-					sleep((long) (1000));
-				}catch (ConnectionLostException e){
-				}catch (Exception e){
-					Log.e(TAG, ":( Unexpected exception caught", e);
-					ioio_.disconnect();
-					break;
-				}
-			}
-		}
-	}
 	
 	class Looper extends BaseIOIOLooper {
-		Vibration thread_ = new Vibration(ioio_);
 		
 		@Override
 		protected void setup() throws ConnectionLostException {
 			
 			_pressureRead = ioio_.openAnalogInput(_pressurePin);
 			//_pressureRead.setBuffer(200);
-			out = ioio_.openDigitalOutput(23, true);
-			thread_.start();
+			
+			try {
+
+				MyThread thread_ = new MyThread(ioio_);
+				thread_.start();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			//Vibration = new Vibration(ioio_);
+			//thread.start();
 		}
 
 		@Override
 		public void loop() throws ConnectionLostException {
-			//led_.write(!button_.isChecked());
 			try {
 				_volts = _pressureRead.getVoltage();
 				Log.i(TAG, "Volts= "+_volts);
@@ -104,7 +83,7 @@ public class PressureSensingMain extends IOIOActivity {
 		public void disconnected() {
 			Log.i(TAG, "IOIO disconnected");
 			try {
-				thread_.join();
+				thread.join();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -117,4 +96,43 @@ public class PressureSensingMain extends IOIOActivity {
 		return new Looper();
 	}
 	
+	class MyThread extends Thread{
+    	private DigitalOutput led;
+    	
+    	private IOIO ioio_;
+    	
+    	public MyThread(IOIO ioio)throws InterruptedException{
+    		ioio_ = ioio;
+    	}
+    	
+    	public void run(){
+    		super.run();
+			while (true) {
+				try {
+					led = ioio_.openDigitalOutput(0, true);
+					out = ioio_.openDigitalOutput(23, true);
+					while (true) {
+						rate = 10/_volts*10;
+						Log.i (TAG, "Rate= "+ rate);
+						led.write(true);
+						out.write(true);
+						sleep((long) rate/2);
+						led.write(false);
+						out.write(false);
+						sleep((long) rate/2);
+					}
+				} catch (ConnectionLostException e) {
+				} catch (Exception e) {
+					Log.e("HelloIOIOPower", "Unexpected exception caught", e);
+					ioio_.disconnect();
+					break;
+				} finally {
+					try {
+						ioio_.waitForDisconnect();
+					} catch (InterruptedException e) {
+					}
+				}
+			}
+    	}
+    }	
 }
