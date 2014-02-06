@@ -17,4 +17,23 @@
 	    android:layout_below="@id/title"
 	    android:text="@string/ToggleButton" />
 
+	<TextView
+	    android:id="@+id/Volt"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignLeft="@+id/button"
+	    android:layout_below="@+id/button"
+	    android:layout_marginTop="22dp"
+	    android:text="@string/Volts"
+	    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+	<TextView
+	    android:id="@+id/Rate"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignLeft="@+id/Volt"
+	    android:layout_below="@+id/Volt"
+	    android:text="@string/Rate"
+	    android:textAppearance="?android:attr/textAppearanceLarge" />
+
 </RelativeLayout>

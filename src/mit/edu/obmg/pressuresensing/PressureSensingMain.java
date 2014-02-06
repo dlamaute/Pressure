@@ -10,12 +10,14 @@ import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class PressureSensingMain extends IOIOActivity {
 	private final String TAG = "PressureSensing";
 	private ToggleButton button_;
 	
+	//MultiThreading
 	private Thread Vibration;
 	Thread thread = new Thread(Vibration);
 	
@@ -28,14 +30,18 @@ public class PressureSensingMain extends IOIOActivity {
 	float rate = 1000;
 	DigitalOutput out;
 	
+	//UI
+	private TextView mVoltValue, mRateValue;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pressure_sensing_main);
 		
 		button_ = (ToggleButton) findViewById(R.id.button);
-
 		
+		mVoltValue = (TextView)findViewById(R.id.Volt);
+		mRateValue = (TextView)findViewById(R.id.Rate);		
 	}
 	
 	protected void onStart(){
@@ -71,12 +77,18 @@ public class PressureSensingMain extends IOIOActivity {
 		@Override
 		public void loop() throws ConnectionLostException {
 			try {
-				_volts = _pressureRead.getVoltage();
+				_volts = _pressureRead.read();
 				Log.i(TAG, "Volts= "+_volts);
+				
 				Thread.sleep(100);
 				//_volts = _pressureRead.getVoltageBuffered();
 			} catch (InterruptedException e) {
 			}
+			mVoltValue.post(new Runnable() {
+				public void run() {
+					mVoltValue.setText("Volts: "+ _volts);
+				}
+			});
 		}
 		
 		@Override
@@ -110,10 +122,17 @@ public class PressureSensingMain extends IOIOActivity {
 			while (true) {
 				try {
 					led = ioio_.openDigitalOutput(0, true);
-					out = ioio_.openDigitalOutput(23, true);
+					out = ioio_.openDigitalOutput(13, true);
 					while (true) {
-						rate = 10/_volts*10;
+						rate = 10/_volts;
 						Log.i (TAG, "Rate= "+ rate);
+						
+						mRateValue.post(new Runnable() {
+							public void run() {
+								mRateValue.setText("Rate: "+ rate/2);
+							}
+						});
+						
 						led.write(true);
 						out.write(true);
 						sleep((long) rate/2);
