@@ -1,5 +1,7 @@
 package mit.edu.obmg.pressuresensing;
 
+import java.text.DecimalFormat;
+
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
@@ -78,6 +80,8 @@ public class PressureSensingMain extends IOIOActivity {
 		public void loop() throws ConnectionLostException {
 			try {
 				_volts = _pressureRead.read();
+				DecimalFormat numberFormat = new DecimalFormat("#.00");
+				
 				Log.i(TAG, "Volts= "+_volts);
 				
 				Thread.sleep(100);
