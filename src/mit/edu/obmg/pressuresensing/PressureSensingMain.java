@@ -1,12 +1,12 @@
 package mit.edu.obmg.pressuresensing;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
 import ioio.lib.api.exception.ConnectionLostException;
-import ioio.lib.util.AbstractIOIOActivity;
 import ioio.lib.util.BaseIOIOLooper;
 import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOActivity;
@@ -27,6 +27,7 @@ public class PressureSensingMain extends IOIOActivity {
 	int _pressurePin = 41;
 	private AnalogInput _pressureRead;
 	float _volts = 1;
+	String _roundVolts;
 	
 	//Vibration
 	float rate = 1000;
@@ -62,25 +63,24 @@ public class PressureSensingMain extends IOIOActivity {
 			
 			_pressureRead = ioio_.openAnalogInput(_pressurePin);
 			//_pressureRead.setBuffer(200);
+			//Log.d(TAG, "Inside Looper");
 			
 			try {
-
-				MyThread thread_ = new MyThread(ioio_);
+				Vibration thread_ = new Vibration(ioio_);
 				thread_.start();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			//Vibration = new Vibration(ioio_);
-			//thread.start();
 		}
 
 		@Override
 		public void loop() throws ConnectionLostException {
 			try {
-				_volts = _pressureRead.read();
-				DecimalFormat numberFormat = new DecimalFormat("#.00");
+				_volts = _pressureRead.read()*10;
+				//DecimalFormat numberFormat = new DecimalFormat("#.00");
+				
+				//_roundVolts = numberFormat.format(_volts);
 				
 				Log.i(TAG, "Volts= "+_volts);
 				
@@ -90,7 +90,7 @@ public class PressureSensingMain extends IOIOActivity {
 			}
 			mVoltValue.post(new Runnable() {
 				public void run() {
-					mVoltValue.setText("Volts: "+ _volts);
+					mVoltValue.setText("Volts: "+_volts);
 				}
 			});
 		}
@@ -112,12 +112,12 @@ public class PressureSensingMain extends IOIOActivity {
 		return new Looper();
 	}
 	
-	class MyThread extends Thread{
+	class Vibration extends Thread{
     	private DigitalOutput led;
     	
     	private IOIO ioio_;
     	
-    	public MyThread(IOIO ioio)throws InterruptedException{
+    	public Vibration(IOIO ioio)throws InterruptedException{
     		ioio_ = ioio;
     	}
     	
@@ -128,7 +128,7 @@ public class PressureSensingMain extends IOIOActivity {
 					led = ioio_.openDigitalOutput(0, true);
 					out = ioio_.openDigitalOutput(13, true);
 					while (true) {
-						rate = 10/_volts;
+						rate = 100/_volts;
 						Log.i (TAG, "Rate= "+ rate);
 						
 						mRateValue.post(new Runnable() {
@@ -157,5 +157,5 @@ public class PressureSensingMain extends IOIOActivity {
 				}
 			}
     	}
-    }	
+    }
 }
