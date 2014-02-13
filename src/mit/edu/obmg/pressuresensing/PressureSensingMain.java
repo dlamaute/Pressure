@@ -77,7 +77,7 @@ public class PressureSensingMain extends IOIOActivity {
 		@Override
 		public void loop() throws ConnectionLostException {
 			try {
-				_volts = _pressureRead.read()*10;
+				_volts = _pressureRead.read()*100;
 				//DecimalFormat numberFormat = new DecimalFormat("#.00");
 				
 				//_roundVolts = numberFormat.format(_volts);
@@ -128,7 +128,11 @@ public class PressureSensingMain extends IOIOActivity {
 					led = ioio_.openDigitalOutput(0, true);
 					out = ioio_.openDigitalOutput(13, true);
 					while (true) {
-						rate = 100/_volts;
+						if (_volts == 0){
+							rate = 1000;
+						}else{
+							rate = 1/_volts*100;
+						}
 						Log.i (TAG, "Rate= "+ rate);
 						
 						mRateValue.post(new Runnable() {
