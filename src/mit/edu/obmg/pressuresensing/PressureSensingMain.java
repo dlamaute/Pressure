@@ -126,7 +126,7 @@ public class PressureSensingMain extends IOIOActivity {
 			while (true) {
 				try {
 					led = ioio_.openDigitalOutput(0, true);
-					out = ioio_.openDigitalOutput(13, true);
+					out = ioio_.openDigitalOutput(13,DigitalOutput.Spec.Mode.OPEN_DRAIN,false);
 					while (true) {
 						if (_volts == 0){
 							rate = 1000;
