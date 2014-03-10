@@ -82,7 +82,7 @@ public class PressureSensingMain extends IOIOActivity {
 				
 				//_roundVolts = numberFormat.format(_volts);
 				
-				Log.i(TAG, "Volts= "+_volts);
+				//Log.i(TAG, "Volts= "+_volts);
 				
 				Thread.sleep(100);
 				//_volts = _pressureRead.getVoltageBuffered();
@@ -126,14 +126,14 @@ public class PressureSensingMain extends IOIOActivity {
 			while (true) {
 				try {
 					led = ioio_.openDigitalOutput(0, true);
-					out = ioio_.openDigitalOutput(13,DigitalOutput.Spec.Mode.OPEN_DRAIN,false);
+					out = ioio_.openDigitalOutput(13,false);
 					while (true) {
 						if (_volts == 0){
 							rate = 1000;
 						}else{
 							rate = 1/_volts*100;
 						}
-						Log.i (TAG, "Rate= "+ rate);
+						//Log.i (TAG, "Rate= "+ rate);
 						
 						mRateValue.post(new Runnable() {
 							public void run() {
