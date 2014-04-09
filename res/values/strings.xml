@@ -8,5 +8,9 @@
     
     <string name="Volts">Volts: 0.0</string>
     <string name="Rate">Rate: 0</string>
+    
+    <string name="Sensitivity">Sensitivity: 1.0</string>
+    <string name="ButtonPlus">+</string>
+    <string name="ButtonMinus">-</string>
 
 </resources>

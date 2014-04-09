@@ -1,8 +1,5 @@
 package mit.edu.obmg.pressuresensing;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-
 import ioio.lib.api.AnalogInput;
 import ioio.lib.api.DigitalOutput;
 import ioio.lib.api.IOIO;
@@ -12,10 +9,13 @@ import ioio.lib.util.IOIOLooper;
 import ioio.lib.util.android.IOIOActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-public class PressureSensingMain extends IOIOActivity {
+public class PressureSensingMain extends IOIOActivity implements OnClickListener{
 	private final String TAG = "PressureSensing";
 	private ToggleButton button_;
 	
@@ -32,9 +32,11 @@ public class PressureSensingMain extends IOIOActivity {
 	//Vibration
 	float rate = 1000;
 	DigitalOutput out;
+	private int sensitivityFactor = 1;
 	
 	//UI
-	private TextView mVoltValue, mRateValue;
+	private TextView mVoltValue, mRateValue, mSensitivityValue;
+	private Button ButtonPlus, ButtonMinus;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -42,9 +44,14 @@ public class PressureSensingMain extends IOIOActivity {
 		setContentView(R.layout.activity_pressure_sensing_main);
 		
 		button_ = (ToggleButton) findViewById(R.id.button);
+		ButtonPlus = (Button) findViewById(R.id.ButtonPlus);
+		ButtonPlus.setOnClickListener(this);
+		ButtonMinus = (Button) findViewById(R.id.ButtonMinus);
+		ButtonMinus.setOnClickListener(this);
 		
 		mVoltValue = (TextView)findViewById(R.id.Volt);
-		mRateValue = (TextView)findViewById(R.id.Rate);		
+		mRateValue = (TextView)findViewById(R.id.Rate);
+		mSensitivityValue = (TextView)findViewById(R.id.Sensitivity);		
 	}
 	
 	protected void onStart(){
@@ -129,15 +136,19 @@ public class PressureSensingMain extends IOIOActivity {
 					out = ioio_.openDigitalOutput(13,false);
 					while (true) {
 						if (_volts == 0){
-							rate = 1000;
+							rate = 100;
 						}else{
-							rate = 1/_volts*100;
+							rate = 100 - _volts*sensitivityFactor;
+							if (rate < 0){
+								rate = 0;
+							}
 						}
 						//Log.i (TAG, "Rate= "+ rate);
 						
 						mRateValue.post(new Runnable() {
 							public void run() {
 								mRateValue.setText("Rate: "+ rate/2);
+								mSensitivityValue.setText("Sensitivity: "+ sensitivityFactor);
 							}
 						});
 						
@@ -162,4 +173,18 @@ public class PressureSensingMain extends IOIOActivity {
 			}
     	}
     }
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()){
+		case R.id.ButtonPlus:
+			sensitivityFactor = sensitivityFactor + 10;
+			break;
+
+		case R.id.ButtonMinus:
+			sensitivityFactor = sensitivityFactor - 10;
+			break;
+		}
+		
+	}
 }
