@@ -138,7 +138,7 @@ public class PressureSensingMain extends IOIOActivity implements OnClickListener
 						if (_volts == 0){
 							rate = 100;
 						}else{
-							rate = 100 - _volts*sensitivityFactor;
+							rate = map(_volts, (float) 0.0, (float) 2.0, (float) 200.0, (float) 20.0);
 							if (rate < 0){
 								rate = 0;
 							}
@@ -154,10 +154,10 @@ public class PressureSensingMain extends IOIOActivity implements OnClickListener
 						
 						led.write(true);
 						out.write(true);
-						sleep((long) rate/2);
+						sleep((long) rate);
 						led.write(false);
 						out.write(false);
-						sleep((long) rate/2);
+						sleep((long) rate);
 					}
 				} catch (ConnectionLostException e) {
 				} catch (Exception e) {
@@ -186,5 +186,10 @@ public class PressureSensingMain extends IOIOActivity implements OnClickListener
 			break;
 		}
 		
+	}
+	
+	float map(float x, float in_min, float in_max, float out_min, float out_max)
+	{
+	  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 	}
 }
