@@ -17,7 +17,7 @@ import android.widget.ToggleButton;
 
 public class PressureSensingMain extends IOIOActivity implements OnClickListener{
 	private final String TAG = "PressureSensing";
-	private ToggleButton button_;
+	private ToggleButton button_
 	
 	//MultiThreading
 	private Thread Vibration;
@@ -50,7 +50,7 @@ public class PressureSensingMain extends IOIOActivity implements OnClickListener
 		ButtonMinus.setOnClickListener(this);
 		
 		mVoltValue = (TextView)findViewById(R.id.Volt);
-		mRateValue = (TextView)findViewById(R.id.Rate);
+		mRateValue = (TextView)findViewById(R.id.Rate); 
 		mSensitivityValue = (TextView)findViewById(R.id.Sensitivity);		
 	}
 	
