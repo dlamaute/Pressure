@@ -17,7 +17,7 @@ import android.widget.ToggleButton;
 
 public class PressureSensingMain extends IOIOActivity implements OnClickListener{
 	private final String TAG = "PressureSensing";
-	private ToggleButton button_
+	private ToggleButton button_;
 	
 	//MultiThreading
 	private Thread Vibration;
@@ -31,6 +31,7 @@ public class PressureSensingMain extends IOIOActivity implements OnClickListener
 	
 	//Vibration
 	float rate = 1000;
+	float initialRate = 500;
 	DigitalOutput out;
 	private int sensitivityFactor = 1;
 	
@@ -136,18 +137,14 @@ public class PressureSensingMain extends IOIOActivity implements OnClickListener
 					out = ioio_.openDigitalOutput(13,false);
 					while (true) {
 						if (_volts == 0){
-							rate = 100;
+							rate = initialRate - sensitivityFactor;
 						}else{
-							rate = map(_volts, (float) 0.0, (float) 2.0, (float) 200.0, (float) 20.0);
-							if (rate < 0){
-								rate = 0;
-							}
+							rate = map(_volts, (float) 0.0, (float) 2.0, (float) rate, (float) 20.0);
 						}
-						//Log.i (TAG, "Rate= "+ rate);
 						
 						mRateValue.post(new Runnable() {
 							public void run() {
-								mRateValue.setText("Rate: "+ rate/2);
+								mRateValue.setText("Rate: "+ rate);
 								mSensitivityValue.setText("Sensitivity: "+ sensitivityFactor);
 							}
 						});
@@ -161,7 +158,7 @@ public class PressureSensingMain extends IOIOActivity implements OnClickListener
 					}
 				} catch (ConnectionLostException e) {
 				} catch (Exception e) {
-					Log.e("HelloIOIOPower", "Unexpected exception caught", e);
+					Log.e(TAG, "Unexpected exception caught", e);
 					ioio_.disconnect();
 					break;
 				} finally {
