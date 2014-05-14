@@ -12,16 +12,16 @@
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="yes"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="yes"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="yes"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="yes"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="yes"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="yes"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="yes"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
@@ -109,6 +109,15 @@
 <wire x1="36.5" y1="0" x2="36.5" y2="33.5" width="0" layer="20"/>
 <wire x1="36.5" y1="33.5" x2="0" y2="33.5" width="0" layer="20"/>
 <wire x1="0" y1="33.5" x2="0" y2="0" width="0" layer="20"/>
+<text x="14" y="27.5" size="1.778" layer="25">FSR</text>
+<text x="9.5" y="27.5" size="1.778" layer="25">9V</text>
+<text x="7" y="23" size="1.778" layer="25">+</text>
+<text x="9.5" y="23" size="1.778" layer="25">+</text>
+<text x="17" y="23" size="1.778" layer="25">+</text>
+<text x="15" y="23" size="1.778" layer="25">-</text>
+<text x="12.5" y="23" size="1.778" layer="25">-</text>
+<text x="4.5" y="23" size="1.778" layer="25">-</text>
+<text x="4.5" y="28.5" size="1.778" layer="25">vib</text>
 </plain>
 <libraries>
 <library name="transistor-power">
@@ -1509,8 +1518,6 @@ design rules under a new name.</description>
 <element name="IOIOGND" library="SparkFun-Connectors" package="1X01_POGOPIN_HOLE_0.58" value="M01POGOPIN_HOLE_0.58" x="5" y="6.5"/>
 <element name="IOIO+3V3" library="SparkFun-Connectors" package="1X01_POGOPIN_HOLE_0.58" value="M01POGOPIN_HOLE_0.58" x="5" y="4"/>
 <element name="IOIO13" library="SparkFun-Connectors" package="1X01_POGOPIN_HOLE_0.58" value="M01POGOPIN_HOLE_0.58" x="32.5" y="29"/>
-<element name="+FSR" library="SparkFun-Connectors" package="1X01_POGOPIN_HOLE_0.58" value="M01POGOPIN_HOLE_0.58" x="10" y="4"/>
-<element name="-FSR" library="SparkFun-Connectors" package="1X01_POGOPIN_HOLE_0.58" value="M01POGOPIN_HOLE_0.58" x="12.5" y="4"/>
 <element name="1" library="con-molex" package="70543-06" value="connect" x="11.5" y="25.5" rot="R180">
 <attribute name="OC_NEWARK" value="unknown" x="11.5" y="25.5" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MPN" value="" x="11.5" y="25.5" size="1.778" layer="27" rot="R180" display="off"/>
@@ -1528,7 +1535,6 @@ design rules under a new name.</description>
 <wire x1="9.19" y1="18.31" x2="9.19" y2="15.77" width="0.8128" layer="16"/>
 </signal>
 <signal name="GND">
-<contactref element="IC1" pad="8"/>
 <polygon width="0.8128" layer="16" isolate="0.4064">
 <vertex x="0" y="33.5"/>
 <vertex x="36.5" y="33.5"/>
@@ -1542,6 +1548,7 @@ design rules under a new name.</description>
 <contactref element="IOIOGND" pad="1"/>
 <wire x1="5" y1="6.5" x2="5" y2="6.69" width="0.8128" layer="16"/>
 <wire x1="5" y1="6.69" x2="7" y2="8.69" width="0.8128" layer="16"/>
+<contactref element="IC1" pad="4"/>
 </signal>
 <signal name="N$3">
 <contactref element="Q1" pad="C"/>
@@ -1566,18 +1573,15 @@ design rules under a new name.</description>
 </signal>
 <signal name="+3V3">
 <contactref element="IOIO+3V3" pad="1"/>
-<contactref element="IC1" pad="4"/>
-<contactref element="+FSR" pad="1"/>
 <contactref element="1" pad="1"/>
-<wire x1="17.85" y1="25.5" x2="17.85" y2="24.85" width="0.8128" layer="16"/>
-<wire x1="17.85" y1="24.85" x2="14" y2="21" width="0.8128" layer="16"/>
-<wire x1="14" y1="21" x2="14" y2="15.5" width="0.8128" layer="16"/>
-<wire x1="14" y1="15.5" x2="9.19" y2="10.69" width="0.8128" layer="16"/>
-<wire x1="9.19" y1="10.69" x2="6.19" y2="10.69" width="0.8128" layer="16"/>
-<wire x1="6.19" y1="10.69" x2="3" y2="7.5" width="0.8128" layer="16"/>
-<wire x1="3" y1="7.5" x2="3" y2="6" width="0.8128" layer="16"/>
-<wire x1="3" y1="6" x2="5" y2="4" width="0.8128" layer="16"/>
-<wire x1="5" y1="4" x2="10" y2="4" width="0.8128" layer="16"/>
+<contactref element="IC1" pad="8"/>
+<wire x1="5" y1="4" x2="7" y2="4" width="0.8128" layer="16"/>
+<wire x1="7" y1="4" x2="13.5" y2="10.5" width="0.8128" layer="16"/>
+<wire x1="13.5" y1="10.5" x2="13.5" y2="15" width="0.8128" layer="16"/>
+<wire x1="13.5" y1="15" x2="16.81" y2="18.31" width="0.8128" layer="16"/>
+<wire x1="16.81" y1="18.31" x2="16.81" y2="20.81" width="0.8128" layer="16"/>
+<wire x1="16.81" y1="20.81" x2="17.85" y2="21.85" width="0.8128" layer="16"/>
+<wire x1="17.85" y1="21.85" x2="17.85" y2="25.5" width="0.8128" layer="16"/>
 </signal>
 <signal name="N$5">
 <contactref element="Q1" pad="A1"/>
